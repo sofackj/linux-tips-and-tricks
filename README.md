@@ -40,6 +40,18 @@ sed "s/10.24.153.111/$ip/g"
 sudo fdisk -l
 ```
 
+## Archives and compression
+
+```
+# Archive and compress
+tar -czvf directory.tar.gz /path/to/the/file/to/tar
+```
+
+```
+# Unarchive and uncompress
+tar -xzvf directory.tar.gz
+```
+
 ## Network
 
 ### Netcat
@@ -49,11 +61,19 @@ sudo fdisk -l
 nc -vw2 [Ip address or computer name] [port number]
 ```
 
-### Netcat transfers
+### Telnet
 
 ```
-nc -vw2 ugexcocr02.hd.sncf.fr 22
+telnet [Ip address or computer name] [port number]
 ```
+
+### Nmap
+
+```
+nmap [Ip address or computer name] -p [port number]
+```
+
+### Netcat transfers
 
 Always take a port number superior to 1024
 
@@ -70,7 +90,7 @@ Next operation on the host transferring the file
 # Package the file without touching the original
 tar cvf - localperl/
 # Transfer the tar file via netcat
-tar cvf - localperl/ | nc -v 0.0.0.0 1111
+tar cvf - localperl/ | nc -v 10.5.253.97 1111
 # In case the netcat communication doesn't stop
 # we insert an error with a non existent file
 tar cvf - localperl/ lol | nc -v 10.5.186.3 1111
@@ -137,36 +157,134 @@ openssl rsa -in C:\Certificates\localPrivateKeyfile.key -text > privateKeyFileIn
 
 ### Avooid connection when time out set up
 
+```
 while true
 do
-        tput sc
-        sleep 99
+tput sc
+sleep 99
 done &
+```
 
-### Bash tips
+## Reboot
 
-#### Split a string
+```
+#
+sudo reboot
+#
+sudo shutdown -rF
+#
+sudo init 6
+```
+
+## Command watch
+
+```
+# -n 5 -> check every 5s
+# -c -> preserve the color
+watch -c -n 10 cat path/to/a/file
+```
+
+## Rare issues
+
+### Files with the same name issue
+
+```
+# Display quoted version of files (with GNU)
+ls -lQ
+```
+
+#### No in GNU system
+
+
+```
+# Display inode number
+ls -li
+```
+
+```
+# Look for the file
+find . -inum [number] -user [user] -ls
+```
+
+```
+# Look for the file (-delete for GNU system)
+find . -inum [number] -user [user] -exec rm {} \
+# For GNU system -> find . -inum [number] -user [user] -delete
+```
+
+## Bash tips
+
+### Transfer a*bash script content in a file
+
+```
+# With this way no variable will be assigned
+cat <<"EOF"> bash_script.sh
+#!/bin/bash
+value="hello"
+echo $value
+EOF
+```
+
+### Mini tips
+
+#### Loops : filenames with spaces
+
+```
+# Before the loop assign the variable
+IFS=$'\n'
+```
+
+### Conditions
+
+```
+for i in $(ls /path/with/file)
+do
+        if [[ "$i" == *.txt  ]]
+        then
+                echo $i
+        fi
+done
+```
+
+### Split a string
 
 - Using cut
 
 ```
 extract=$(echo "hello_world_by"| cut -d'_' -f 2)
 echo $extract
-# Output -> hello
+# Output -> world
 ```
 
 - Expansion parameters
 
 ```
-# Start from a part of the string
 var="01234567890abcdefgh"
+
+# Extract from the seventh first character of the string
 echo ${var:7}
 # Output -> 7890abcdefgh
+
+# Extract from the seventh last character of the string
+# The space at ": -7" is very important
+echo ${var: -7}
+# Output -> bcdefgh
 ```
 
 ```
+var="01234567890abcdefgh"
 
+# Start from a part of the string and take the 2 first
+echo ${var:7:2}
+# Output -> 78
+
+# Start from a part of the string and remove the 2 last
+echo ${var:7:-2}
+# Output -> 7890abcdef
 ```
+
+- 
+
 
 ###
 
